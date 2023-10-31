@@ -1,0 +1,19 @@
+{
+  "canisters": {
+    "ic_key_value_project_backend": {
+      "main": "src/ic_key_value_project_backend/main.mo",
+      "type": "motoko",
+      "declarations": {
+        "node_compatibility": true
+      }
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}

@@ -6,7 +6,8 @@ import DataStore "./store";
 import Blob "mo:base/Blob";
 import Utils "./utils";
 
-actor StoreREInfo {
+actor class StoreREInfo(_admin: Text){
+    
 
     type UserId = Principal;
 
@@ -42,28 +43,34 @@ actor StoreREInfo {
 
     //get self user ID
     public shared query(msg) func getOwnId(): async UserId { msg.caller };
+
+    public shared query(msg) func getOwnIdText(): async Text { Utils.getTextRepresUser(msg.caller)};
+
+    public shared query(msg) func isAdmin(): async Bool { Utils.checkAdmin(msg.caller, _admin)};
+
+    public shared func getAdmin(): async Text { _admin };
     
 
     //CRUD Asset
 
     public shared query(msg) func asset_get(key: Text) : async (?Asset) {
-        if(not Utils.isAdmin(msg.caller)) return null;
+        if(Utils.checkAdmin(msg.caller, _admin) != true) return null;
         let entry: ?Asset = storeAsset.get(key);
         return entry;
     };
 
     public shared(msg) func asset_set(key: Text, data: Asset) : async () {
-        if(not Utils.isAdmin(msg.caller)) return;
+        if(Utils.checkAdmin(msg.caller, _admin) != true) return;
         storeAsset.put(key, data);
     };
 
     public shared(msg) func asset_del(key: Text) : async () {
-        if(not Utils.isAdmin(msg.caller)) return;
+        if(Utils.checkAdmin(msg.caller, _admin) != true) return;
         let entry: ?Asset = storeAsset.del(key);
     };
 
     public shared query(msg) func asset_list(filter: ?DataStore.Filter) : async [(Text, Asset)] {
-        if(not Utils.isAdmin(msg.caller)) return [];
+        if(Utils.checkAdmin(msg.caller, _admin) != true) return [];
         let results: [(Text, Asset)] = storeAsset.list_items(filter);
         return results;
     };
@@ -72,18 +79,18 @@ actor StoreREInfo {
     //CRUD UserProfile
 
     public shared query(msg) func user_profile_get(key: Text) : async (?UserProfile) {
-        if(not Utils.isAdmin(msg.caller)) return null;
+        if(Utils.checkAdmin(msg.caller, _admin) != true) return null;
         let entry: ?UserProfile = storeUserProfile.get(key);
         return entry;
     };
 
     public shared(msg) func user_profile_set(key: Text, data: UserProfile) : async () {
-        if(not Utils.isAdmin(msg.caller)) return;
+        if(Utils.checkAdmin(msg.caller, _admin) != true) return;
         storeUserProfile.put(key, data);
     };
 
     public shared(msg) func user_profile_block(key: Text, data: Bool) : async () {
-        if(not Utils.isAdmin(msg.caller)) return;
+        if(Utils.checkAdmin(msg.caller, _admin) != true) return;
 
         let entry: ?UserProfile = storeUserProfile.get(key);
 
@@ -106,12 +113,12 @@ actor StoreREInfo {
 
 
     public shared(msg) func user_profile_del(key: Text) : async () {
-        if(not Utils.isAdmin(msg.caller)) return;
+        if(Utils.checkAdmin(msg.caller, _admin) != true) return;
         let entry: ?UserProfile = storeUserProfile.del(key);
     };
 
     public shared query(msg) func user_profile_list(filter: ?DataStore.Filter) : async [(Text, UserProfile)] {
-        if(not Utils.isAdmin(msg.caller)) return [];
+        if(Utils.checkAdmin(msg.caller, _admin) != true) return [];
         let results: [(Text, UserProfile)] = storeUserProfile.list_items(filter);
         return results;
     };
@@ -120,23 +127,23 @@ actor StoreREInfo {
     //CRUD P2P_Platforms
 
     public shared query(msg) func p2p_platforms_get(key: Text) : async (?P2P_Platforms_whitelist) {
-        if(not Utils.isAdmin(msg.caller)) return null;
+        if(Utils.checkAdmin(msg.caller, _admin) != true) return null;
         let entry: ?P2P_Platforms_whitelist = storeP2P_Platforms.get(key);
         return entry;
     };
 
     public shared(msg) func p2p_platforms_set(key: Text, data: P2P_Platforms_whitelist) : async () {
-        if(not Utils.isAdmin(msg.caller)) return;
+        if(Utils.checkAdmin(msg.caller, _admin) != true) return;
         storeP2P_Platforms.put(key, data);
     };
 
     public shared(msg) func p2p_platforms_del(key: Text) : async () {
-        if(not Utils.isAdmin(msg.caller)) return;
+        if(Utils.checkAdmin(msg.caller, _admin) != true) return;
         let entry: ?P2P_Platforms_whitelist = storeP2P_Platforms.del(key);
     };
 
     public shared query(msg) func p2p_platforms_list(filter: ?DataStore.Filter) : async [(Text, P2P_Platforms_whitelist)] {
-        if(not Utils.isAdmin(msg.caller)) return [];
+        if(Utils.checkAdmin(msg.caller, _admin) != true) return [];
         let results: [(Text, P2P_Platforms_whitelist)] = storeP2P_Platforms.list_items(filter);
         return results;
     };
